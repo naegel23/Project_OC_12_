@@ -9,7 +9,11 @@ class Permissions(permissions.BasePermission):
             return True
 
         # Write permissions are only allowed to the owner of the snippet.
-        return obj.sales_contact == request.user
+        try:
+            return obj.sales_contact == request.user
+        except:
+            var = obj['sales_contact'] == request.user
+            return var
 
 
 class EventPermissions(permissions.BasePermission):

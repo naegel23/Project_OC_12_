@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+from django.conf import settings
+from django.contrib.auth.models import User
 # Create your models here.
 
 
@@ -77,3 +82,6 @@ class Event(models.Model):
     description = models.CharField(max_length=255)
     guests_number = models.IntegerField(validators=[MinValueValidator(1)])
     objects = models.Manager()
+
+
+

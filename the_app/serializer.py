@@ -45,6 +45,20 @@ class ContractSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id', 'created_date', 'updated_date')
 
+    def create(self, validated_data):
+        client = Client.objects.get(first_name=validated_data['client'])
+        sales_contact = self.context['request'].user
+        name = validated_data['name']
+        amount = validated_data['amount']
+        is_signed = validated_data['is_signed']
+        contract_obj = Contract(client=client,
+                                sales_contact=sales_contact,
+                                name=name,
+                                amount=amount,
+                                is_signed=is_signed)
+        contract_obj.save()
+        return validated_data
+
 
 class EventSerializer(serializers.ModelSerializer):
 
@@ -52,10 +66,3 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = '__all__'
         read_only_fields = ('id', 'created_date', 'updated_date')
-
-
-class SupportContactSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = CustomUser
-        fields = '__all__'
