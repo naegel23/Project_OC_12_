@@ -10,7 +10,8 @@ class Permissions(permissions.BasePermission):
 
         # Write permissions are only allowed to the owner of the snippet.
         try:
-            return obj.sales_contact == request.user
+            var = obj.sales_contact == request.user
+            return var
         except:
             var = obj['sales_contact'] == request.user
             return var
