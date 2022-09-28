@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 
 class CustomUser(AbstractUser):
     roles = [('Gestion', 'Gestion'), ('Vente', 'Vente'), ('Support', 'Support')]
-    role = models.CharField(choices=roles, max_length=255, default="Gestion")
+    role = models.CharField(choices=roles, max_length=255, default="Vente")
 
     def __str__(self):
         return self.username + " | " + "role: " + self.role
@@ -66,10 +67,24 @@ class Contract(models.Model):
     def __str__(self):
         return self.name
 
+    def clean(self, *args, **kwargs):
+        try:
+            self.client is not None
+        except Client.DoesNotExist:
+            raise ValidationError('A contract must have a client to be created')
+        print(self.client)
+        print(self.client.is_confirmed_client)
+        if self.client.is_confirmed_client:
+            return True
+        else:
+            raise ValidationError('This client is not a confirmed client yet')
+
 
 class Event(models.Model):
     name = models.CharField(max_length=255)
-    client = models.ForeignKey(to=Client, on_delete=models.CASCADE)
+    contract = models.ForeignKey(to=Contract, on_delete=models.CASCADE, null=True)
+    client = models.ForeignKey(to=Client, on_delete=models.CASCADE, null=True)
+    event_date = models.DateTimeField(blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     support_contact = models.ForeignKey(to=CustomUser, on_delete=models.DO_NOTHING, blank=True, null=True)
@@ -77,3 +92,14 @@ class Event(models.Model):
     description = models.CharField(max_length=255)
     guests_number = models.IntegerField(validators=[MinValueValidator(1)])
     objects = models.Manager()
+
+    def __str__(self):
+        return self.name
+
+    def clean(self, *args, **kwargs):
+        print(self.contract)
+        print(self.contract.is_signed)
+        if self.contract.is_signed:
+            return True
+        else:
+            raise ValidationError('The event cannot be created until it\'s contract is signed')

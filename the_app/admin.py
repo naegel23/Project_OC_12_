@@ -16,7 +16,7 @@ class ContractFields(admin.ModelAdmin):
 
 
 class EventFields(admin.ModelAdmin):
-    list_display = ['name', 'client', 'description', 'guests_number', 'created_date', 'event_status']
+    list_display = ['name', 'contract', 'description', 'guests_number', 'created_date', 'event_status']
 
 
 admin.site.register(CustomUser, UserFields)

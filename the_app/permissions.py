@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from .models import Client
 
 
 class Permissions(permissions.BasePermission):
@@ -7,8 +8,7 @@ class Permissions(permissions.BasePermission):
 
         if request.method in permissions.SAFE_METHODS:
             return True
-
-        # Write permissions are only allowed to the owner of the snippet.
+            # Write permissions are only allowed to the owner of the snippet.
         try:
             var = obj.sales_contact == request.user
             return var

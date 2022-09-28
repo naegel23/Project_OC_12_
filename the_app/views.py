@@ -18,7 +18,7 @@ class ClientViewSet(viewsets.ModelViewSet):
 class ContractViewSet(viewsets.ModelViewSet):
     serializer_class = ContractSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, Permissions]
-    search_fields = ['name', 'created_date', 'amount']
+    search_fields = ['client__first_name', 'client__email', 'created_date', 'amount']
     filter_backends = (filters.SearchFilter,)
     queryset = Contract.objects.all()
 
@@ -26,6 +26,6 @@ class ContractViewSet(viewsets.ModelViewSet):
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, EventPermissions]
-    search_fields = ['name', 'created_date']
+    search_fields = ['client__first_name', 'client__email', 'event_date']
     filter_backends = (filters.SearchFilter,)
     queryset = Event.objects.all()
