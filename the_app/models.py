@@ -84,7 +84,7 @@ class Event(models.Model):
     name = models.CharField(max_length=255)
     contract = models.ForeignKey(to=Contract, on_delete=models.CASCADE, null=True)
     client = models.ForeignKey(to=Client, on_delete=models.CASCADE, null=True)
-    event_date = models.DateTimeField(blank=True, null=True)
+    event_date = models.DateTimeField(blank=False)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     support_contact = models.ForeignKey(to=CustomUser, on_delete=models.DO_NOTHING, blank=True, null=True)
