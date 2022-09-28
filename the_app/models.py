@@ -55,7 +55,7 @@ class Client(models.Model):
 
 
 class Contract(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     sales_contact = models.ForeignKey(to=CustomUser, on_delete=models.DO_NOTHING, blank=True, null=True)
     client = models.ForeignKey(to=Client, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
