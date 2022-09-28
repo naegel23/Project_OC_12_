@@ -18,6 +18,26 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id', 'sales_user', 'created_date', 'updated_date')
 
+    def create(self, validated_data):
+        sales_contact = validated_data['sales_contact']
+        first_name = validated_data['first_name']
+        last_name = validated_data['last_name']
+        email = validated_data['email']
+        phone = validated_data['phone']
+        mobile = validated_data['mobile']
+        company_name = validated_data['company_name']
+        is_confirmed_client = validated_data['is_confirmed_client']
+        client_obj = Client(sales_contact=sales_contact,
+                            first_name=first_name,
+                            last_name=last_name,
+                            email=email,
+                            phone=phone,
+                            mobile=mobile,
+                            company_name=company_name,
+                            is_confirmed_client=is_confirmed_client)
+        client_obj.save()
+        return validated_data
+
 
 class ContractSerializer(serializers.ModelSerializer):
 
@@ -25,6 +45,20 @@ class ContractSerializer(serializers.ModelSerializer):
         model = Contract
         fields = '__all__'
         read_only_fields = ('id', 'created_date', 'updated_date')
+
+    def create(self, validated_data):
+        client = Client.objects.get(first_name=validated_data['client'])
+        sales_contact = validated_data['sales_contact']
+        name = validated_data['name']
+        amount = validated_data['amount']
+        is_signed = validated_data['is_signed']
+        contract_obj = Contract(client=client,
+                                sales_contact=sales_contact,
+                                name=name,
+                                amount=amount,
+                                is_signed=is_signed)
+        contract_obj.save()
+        return validated_data
 
     def validate(self, attrs):
         if self.context['request'].method == "POST":
@@ -66,6 +100,11 @@ class EventSerializer(serializers.ModelSerializer):
                 pass
             else:
                 raise serializers.ValidationError('The event cannot be created until it\'s contract is signed')
+
+            if attrs['client'].is_confirmed_client:
+                pass
+            else:
+                raise serializers.ValidationError('This client is not a confirmed client yet')
 
         else:
             pass
